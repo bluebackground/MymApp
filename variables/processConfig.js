@@ -1,6 +1,8 @@
-const PROD = 'prod';
-const DEV = 'dev';
-const TEST = 'test';
+const {
+  PROD,
+  DEV,
+  TEST
+} = require('./serverConfig.js');
 
 const env = process.env.NODE_ENV || DEV;
 

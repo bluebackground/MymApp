@@ -33,6 +33,48 @@ const UserSchema = new mongoose.Schema({
     required: false,
     default: null
   },
+  about: {
+    type: String,
+    required: true,
+    default: null,
+
+  },
+  skills: {
+    type: Array,
+    required: false,
+    default: [],
+
+  },
+  interests: {
+    type: Array,
+    required: false,
+    default: [],
+
+  },
+  projects: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: [],
+    ref: 'collectionName'
+  },
+  follows: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: [],
+    ref: 'collectionName'
+  },
+  stars: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: true,
+    default: null,
+
+  },
+  contributions: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: [],
+    ref: 'collectionName'
+  },
   tokens: [{
     access: {
       type: String,
