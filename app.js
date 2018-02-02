@@ -7,7 +7,8 @@ const {
   SERVER_PORT
 } = require('./variables/serverConfig.js');
 
-const port = process.env.PORT || SERVER_PORT;
+// const port = process.env.PORT || SERVER_PORT;
+const port = SERVER_PORT;
 
 mongoose.Promise = global.Promise;
 
