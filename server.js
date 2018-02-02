@@ -22,10 +22,10 @@ const {
 // }
 
 // server.use(cors(corsOptions));
-server.use(cors({
-  origin: '*'
-}));
-// server.use(cors());
+// server.use(cors({
+//   origin: '*'
+// }));
+
 // server.use(function (req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "*");
 //   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -50,6 +50,8 @@ server.use(function (req, res, next) {
   // Pass to next layer of middleware
   next();
 });
+
+server.use(cors());
 
 routes(server);
 
