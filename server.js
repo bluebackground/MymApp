@@ -22,9 +22,10 @@ const {
 // }
 
 // server.use(cors(corsOptions));
-// server.use(cors({
-//   origin: '*'
-// }));
+server.use(cors({
+  origin: '*',
+  credentials: true
+}));
 
 // server.use(function (req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "*");
@@ -51,7 +52,7 @@ server.use(function (req, res, next) {
   next();
 });
 
-server.use(cors());
+// server.use(cors());
 
 routes(server);
 
