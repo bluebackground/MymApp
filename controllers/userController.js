@@ -103,9 +103,7 @@ const userLogin = (req, res) => {
   User.findByCredentials(email, password).then((user) => {
     // console.log(user);
     return user.generateAuthToken().then((token) => {
-      res.header('x-auth', token).send({
-        token
-      });
+      res.header('x-auth', token).send(token);
     });
   }).catch((e) => {
     handleServerError(res, e);
