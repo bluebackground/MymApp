@@ -22,7 +22,9 @@ const {
 // }
 
 // server.use(cors(corsOptions));
-server.user(cors({origin: '*'}));
+server.use(cors({
+  origin: '*'
+}));
 routes(server);
 
 module.exports = server;
