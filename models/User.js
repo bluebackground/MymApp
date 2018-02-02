@@ -35,21 +35,18 @@ const UserSchema = new mongoose.Schema({
   },
   about: {
     type: String,
-    required: true,
+    required: false,
     default: null,
-
   },
   skills: {
     type: Array,
     required: false,
     default: [],
-
   },
   interests: {
     type: Array,
     required: false,
     default: [],
-
   },
   projects: {
     type: [mongoose.Schema.Types.ObjectId],
@@ -65,7 +62,7 @@ const UserSchema = new mongoose.Schema({
   },
   stars: {
     type: [mongoose.Schema.Types.ObjectId],
-    required: true,
+    required: false,
     default: null,
 
   },
@@ -126,6 +123,9 @@ UserSchema.statics.findByCredentials = function (email, password) {
         }
       });
     });
+  }).catch((e) => {
+    console.log("ERROR: in findByCredentials()");
+    throw new Error("Error in User model static method: " + e.message);
   });
 }
 
@@ -141,11 +141,26 @@ UserSchema.methods.generateAuthToken = function () {
     access
   }, process.env.JWT_SECRET).toString();
 
-  user.tokens.push({
-    access,
-    token
+  const check = user.tokens.filter((tok) => {
+    // console.log(tok.access === access);
+    // console.log(tok.token);
+    // console.log("******");
+    // console.log(token);
+    if (tok.access === access && tok.token === token) {
+      return true;
+    }
+    return false;
   });
 
+  // console.log(check.length);
+  if (check.length === 0) {
+    user.tokens.push({
+      access,
+      token
+    });
+  }
+
+  // console.log(user);
   return user.save().then(() => {
     return token;
   });

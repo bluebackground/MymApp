@@ -26,16 +26,35 @@ const {
 
 
 const authenticateUser = (req, res, next) => {
-  const token = req.header('x-auth');
+  // const token = req.header('x-auth');
   // console.log("AuthenticateUser");
-  User.findByToken(token)
+  // User.findByToken(token)
+  //   .then((user) => {
+  //     if (!user) {
+  //       // console.log("Reject");
+  //       return Promise.reject();
+  //     }
+  //     req.user = user;
+  //     req.token = token;
+  //     next();
+  //   })
+  //   .catch((err) => {
+  //     res.status(UNAUTHORIZED).send();
+  //   });
+
+  // Adding this section to accomodate axios problems with headers x-auth
+  const tok = req.query.token;
+  // console.log(req);
+  // console.log(tok);
+
+  User.findByToken(tok)
     .then((user) => {
       if (!user) {
         // console.log("Reject");
         return Promise.reject();
       }
       req.user = user;
-      req.token = token;
+      req.token = tok;
       next();
     })
     .catch((err) => {
@@ -66,7 +85,7 @@ const createUser = (req, res) => {
         return newUser.generateAuthToken();
       })
       .then((token) => {
-        res.header('x-auth', token).send(newUser);
+        res.header('x-auth', token).send(token);
       })
       .catch((err) => {
         handleServerError(res, err);
@@ -82,11 +101,14 @@ const userLogin = (req, res) => {
   const email = req.body.email;
 
   User.findByCredentials(email, password).then((user) => {
+    // console.log(user);
     return user.generateAuthToken().then((token) => {
-      res.header('x-auth', token).send(user);
+      res.header('x-auth', token).send({
+        token
+      });
     });
   }).catch((e) => {
-    res.status(SUCCESS).send();
+    handleServerError(res, e);
   });
 };
 
@@ -97,6 +119,17 @@ const getMe = (req, res) => {
 
 const removeToken = (req, res) => {
   // console.log("removeToken");
+  // Alternate code
+  // const tok = req.body.token;
+
+  // req.user.removeToken(tok).then(() => {
+  //   res.status(SUCCESS).send();
+  // }, () => {
+  //   res.status(BAD_REQUEST).send();
+  // });
+
+  // Authenticate path has to be changed as well.
+  // This uses x-auth. axios doesn't manage this properly
   req.user.removeToken(req.token).then(() => {
     res.status(SUCCESS).send();
   }, () => {
