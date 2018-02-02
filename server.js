@@ -25,6 +25,7 @@ const {
 server.use(cors({
   origin: '*'
 }));
+
 routes(server);
 
 module.exports = server;
