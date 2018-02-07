@@ -50,7 +50,7 @@ const createTech = (req, res) => {
 
     newTech.save()
       .then((tech) => {
-        handleLogs('Created new tech', id);
+        // handleLogs('Created new tech', id);
         res.json(tech);
       })
       .catch((err) => {

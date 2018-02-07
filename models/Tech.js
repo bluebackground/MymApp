@@ -42,8 +42,8 @@ TechSchema.statics.getAllTechs = function () {
 }
 
 // OBJECT METHODS
-TechSchema.methods.getTitle = function () {
-  return this.title;
+TechSchema.methods.getName = function () {
+  return this.name;
 }
 
 TechSchema.methods.getDescription = function () {
