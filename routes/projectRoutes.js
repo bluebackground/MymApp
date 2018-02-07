@@ -4,8 +4,11 @@ module.exports = (app) => {
 
   // Projects
   app
-    .route('/projects')
-    .get(projectController.readProjects)
+    .route('/projects/find')
+    .post(projectController.readProjects)
+
+  app
+    .route('/projects/create')
     .post(projectController.createProject)
   // .delete(projectController.deleteProjects);
 

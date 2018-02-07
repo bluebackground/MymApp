@@ -1,30 +1,39 @@
 const mongoose = require('mongoose');
 
 const TechSchema = new mongoose.Schema({
-  title: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-description: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-type: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-category: {
-  type: String,
-  required: true,
-  default: null,
-  
-}
+  name: {
+    type: String,
+    required: true,
+    default: null
+
+  },
+  description: {
+    type: String,
+    required: true,
+    default: null
+
+  },
+  source: {
+    type: String,
+    required: true,
+    default: null
+  },
+  type: {
+    type: String,
+    required: true,
+    default: null
+
+  },
+  category: {
+    type: String,
+    required: true,
+    default: null
+  },
+  tags: {
+    type: String,
+    required: true,
+    default: null
+  }
 });
 
 // STATIC METHODS

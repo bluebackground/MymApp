@@ -2,131 +2,125 @@ const mongoose = require('mongoose');
 
 const ProjectSchema = new mongoose.Schema({
   title: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-description: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-github: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-likes: {
-  type: [mongoose.Schema.Types.ObjectId],
-  required: false,
-  default: [],
-  ref: 'collectionName'
-},
-visibility: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-stories: {
-  type: Array,
-  required: false,
-  default: [],
-  
-},
-featuresets: {
-  type: Array,
-  required: false,
-  default: [],
-  
-},
-features: {
-  type: Array,
-  required: false,
-  default: [],
-  
-},
-access: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-status: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-requests: {
-  type: Array,
-  required: false,
-  default: [],
-  
-},
-invitations: {
-  type: Array,
-  required: false,
-  default: [],
-  
-},
-polls: {
-  type: Array,
-  required: false,
-  default: [],
-  
-},
-history: {
-  type: Array,
-  required: false,
-  default: [],
-  
-},
-comments: {
-  type: Array,
-  required: false,
-  default: [],
-  
-},
-technologies: {
-  type: [mongoose.Schema.Types.ObjectId],
-  required: false,
-  default: [],
-  ref: 'collectionName'
-},
-tags: {
-  type: Array,
-  required: false,
-  default: [],
-  
-},
-followers: {
-  type: [mongoose.Schema.Types.ObjectId],
-  required: false,
-  default: [],
-  ref: 'collectionName'
-},
-advisors: {
-  type: [mongoose.Schema.Types.ObjectId],
-  required: false,
-  default: [],
-  ref: 'collectionName'
-},
-participants: {
-  type: [mongoose.Schema.Types.ObjectId],
-  required: false,
-  default: [],
-  ref: 'collectionName'
-},
-owner: {
-  type: mongoose.Schema.Types.ObjectId,
-  required: true,
-  default: null,
-  
-}
+    type: String,
+    required: true,
+    default: null,
+
+  },
+  description: {
+    type: String,
+    required: true,
+    default: null,
+
+  },
+  bannerMessage: {
+    type: String,
+    required: true,
+    default: null
+  },
+  github: {
+    type: String,
+    required: true,
+    default: null,
+  },
+  likes: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: [],
+    ref: 'collectionName'
+  },
+  visibility: {
+    type: String,
+    required: true,
+    default: null,
+  },
+  stories: {
+    type: Array,
+    required: false,
+    default: [],
+  },
+  featuresets: {
+    type: Array,
+    required: false,
+    default: [],
+  },
+  features: {
+    type: Array,
+    required: false,
+    default: [],
+  },
+  access: {
+    type: String,
+    required: true,
+    default: null,
+  },
+  status: {
+    type: String,
+    required: true,
+    default: null,
+
+  },
+  requests: {
+    type: Array,
+    required: false,
+    default: [],
+
+  },
+  invitations: {
+    type: Array,
+    required: false,
+    default: [],
+  },
+  polls: {
+    type: Array,
+    required: false,
+    default: [],
+  },
+  history: {
+    type: Array,
+    required: false,
+    default: [],
+  },
+  comments: {
+    type: Array,
+    required: false,
+    default: [],
+
+  },
+  technologies: {
+    type: String,
+    required: false,
+    default: null,
+    ref: 'collectionName'
+  },
+  tags: {
+    type: String,
+    required: false,
+    default: null,
+  },
+  followers: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: [],
+    ref: 'collectionName'
+  },
+  advisors: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: [],
+    ref: 'collectionName'
+  },
+  participants: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: [],
+    ref: 'collectionName'
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false,
+    default: null,
+  }
 });
 
 // STATIC METHODS

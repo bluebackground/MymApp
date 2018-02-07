@@ -24,23 +24,28 @@ const {
 
 const createTech = (req, res) => {
   const {
-    title,
+    name,
     description,
+    source,
     type,
-    category
+    category,
+    tags
   } = req.body;
 
-  if (testAll(validateStringInput, title, description, type, category)) {
+  if (testAll(validateStringInput, name, description, source, type, category, tags)) {
     // Commented out for tests.
+    // console.log("createTech");
     const id = new mongoose.Types.ObjectId();
     const newTech = new Tech({
       // Commented out for tests.
       // Uncomment for production.
       // _id: id,
-      title,
+      name,
       description,
+      source,
       type,
-      category
+      category,
+      tags
     });
 
     newTech.save()

@@ -27,28 +27,17 @@ const createProject = (req, res) => {
     title,
     description,
     github,
-    likes,
     visibility,
-    stories,
-    featuresets,
-    features,
     access,
     status,
-    requests,
-    invitations,
-    polls,
-    history,
-    comments,
+    bannerMessage,
     technologies,
-    tags,
-    followers,
-    advisors,
-    participants,
-    owner
+    tags
   } = req.body;
 
-  if (testAll(validateStringInput, title, description, github, visibility, access, status) && testAll(validateArrayInput, likes, stories, featuresets, features, requests, invitations, polls, history, comments, technologies, tags, followers, advisors, participants) && testAll(validateId, owner)) {
+  if (testAll(validateStringInput, title, description, github, visibility, access, status) /*&& testAll(validateArrayInput, likes, stories, featuresets, features, requests, invitations, polls, history, comments, technologies, tags, followers, advisors, participants) && testAll(validateId, owner)*/ ) {
     // Commented out for tests.
+    // console.log("TESTING");
     const id = new mongoose.Types.ObjectId();
     const newProject = new Project({
       // Commented out for tests.
@@ -56,33 +45,23 @@ const createProject = (req, res) => {
       // _id: id,
       title,
       description,
+      bannerMessage,
       github,
-      likes,
       visibility,
-      stories,
-      featuresets,
-      features,
       access,
       status,
-      requests,
-      invitations,
-      polls,
-      history,
-      comments,
       technologies,
-      tags,
-      followers,
-      advisors,
-      participants,
-      owner
+      tags
     });
 
     newProject.save()
       .then((project) => {
-        handleLogs('Created new project', id);
+        // handleLogs('Created new project', id);
+        // console.log(project);
         res.json(project);
       })
       .catch((err) => {
+        console.log(err);
         handleServerError(res, err);
       });
     return;

@@ -4,9 +4,12 @@ module.exports = (app) => {
 
   // Techs
   app
-    .route('/techs')
-    .get(techController.readTechs)
-    .post(techController.createTech)
+    .route('/techs/find')
+    .post(techController.readTechs);
+
+  app
+    .route('/techs/create')
+    .post(techController.createTech);
   // .delete(techController.deleteTechs);
 
   app
