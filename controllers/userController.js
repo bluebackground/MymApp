@@ -24,6 +24,23 @@ const {
   handleInvalidInput
 } = require('../helpers/handlers.js');
 
+const authenticateUserWithPost = (req, res, next) => {
+  const tok = req.body.token;
+
+  User.findByToken(tok)
+    .then((user) => {
+      if (!user) {
+        // console.log("Reject");
+        return Promise.reject();
+      }
+      req.user = user;
+      req.token = tok;
+      next();
+    })
+    .catch((err) => {
+      res.status(UNAUTHORIZED).send();
+    });
+}
 
 const authenticateUser = (req, res, next) => {
   // const token = req.header('x-auth');
@@ -222,5 +239,6 @@ module.exports = {
   removeToken,
   findUsers,
   findUser,
-  updateUser
+  updateUser,
+  authenticateUserWithPost
 }

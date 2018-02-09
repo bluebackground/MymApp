@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Project = require('../models/Project.js');
+const User = require('../models/User.js');
 
 const {
   SUCCESS,
@@ -116,24 +117,39 @@ const findProject = (req, res) => {
 
   if (validateId(projectID)) {
 
-    const mongooseQuery = Project.findById(projectID);
+    Project.findById(projectID)
+      .select('title github status description participants bannerMessage tags technologies visibility access')
+      .populate({
+        path: 'participants',
+        select: 'username'
+      })
 
-    if (req.body.options.select && typeof req.body.options.select === 'string') {
-      mongooseQuery.select(req.body.options.select);
-    }
+      .exec()
 
-    if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
-      req.body.options.populate.forEach((options) => {
-        const k = Object.keys(options);
-        if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
-          mongoose.Query.populate(options);
-        }
-      });
-    }
+      // if (req.body.options.select && typeof req.body.options.select === 'string') {
+      //   mongooseQuery.select(req.body.options.select);
+      // }
+      //
+      // if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
+      //   req.body.options.populate.forEach((options) => {
+      //     const k = Object.keys(options);
+      //     if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
+      //       mongooseQuery.populate(options);
+      //     }
+      //   });
+      // }
 
-    mongooseQuery.exec()
-      .then((project) => {
-        res.json(project);
+      // mongooseQuery.populate({
+      //   path: 'participants',
+      //   select: 'username'
+      // });
+
+      .then((proj) => {
+        console.log(proj);
+        console.log(proj.participants[0].username);
+        console.log(proj.participants[0]);
+        console.log(JSON.stringify(proj.participants[0]));
+        res.json(proj);
       })
       .catch((err) => {
         handleServerError(res, err);
@@ -233,10 +249,39 @@ const deleteProject = (req, res) => {
   handleInvalidInput(res);
 };
 
+const joinProject = (req, res) => {
+  const {
+    projectID
+  } = req.body;
+
+  // console.log(req.user);
+  // console.log(req.body);
+
+  if (validateId(projectID)) {
+    // Get project and add user Id to project.
+    Project.findById(projectID)
+      .then((project) => {
+        if (!project) {
+          handleInvalidInput(res);
+        }
+        // console.log(project);
+        project.participants.push(req.user._id);
+        project.save();
+        res.status(SUCCESS).send();
+      })
+      .catch((err) => {
+        handleServerError(res, err);
+      });
+    return;
+  }
+  handleInvalidInput(res);
+}
+
 module.exports = {
   createProject,
   readProjects,
   findProject,
   updateProject,
-  deleteProject
+  deleteProject,
+  joinProject
 };

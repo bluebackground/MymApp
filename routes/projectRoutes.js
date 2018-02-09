@@ -1,4 +1,7 @@
 const projectController = require('../controllers/projectController.js');
+const {
+  authenticateUserWithPost
+} = require('../controllers/userController.js');
 
 module.exports = (app) => {
 
@@ -11,6 +14,10 @@ module.exports = (app) => {
     .route('/projects/create')
     .post(projectController.createProject)
   // .delete(projectController.deleteProjects);
+
+  app
+    .route('/projects/join')
+    .post(authenticateUserWithPost, projectController.joinProject);
 
   app
     .route('/projects/:projectID')

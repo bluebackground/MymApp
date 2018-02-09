@@ -110,12 +110,10 @@ const ProjectSchema = new mongoose.Schema({
     default: [],
     ref: 'collectionName'
   },
-  participants: {
-    type: [mongoose.Schema.Types.ObjectId],
-    required: false,
-    default: [],
-    ref: 'collectionName'
-  },
+  participants: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     required: false,
