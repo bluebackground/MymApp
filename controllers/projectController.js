@@ -145,10 +145,10 @@ const findProject = (req, res) => {
       // });
 
       .then((proj) => {
-        console.log(proj);
-        console.log(proj.participants[0].username);
-        console.log(proj.participants[0]);
-        console.log(JSON.stringify(proj.participants[0]));
+        // console.log(proj);
+        // console.log(proj.participants[0].username);
+        // console.log(proj.participants[0]);
+        // console.log(JSON.stryarningify(proj.participants[0]));
         res.json(proj);
       })
       .catch((err) => {
