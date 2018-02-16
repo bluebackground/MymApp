@@ -1,12 +1,23 @@
 const commentController = require('../controllers/commentController.js');
+const {
+  authenticateUserWithPost
+} = require('../controllers/userController.js');
 
 module.exports = (app) => {
 
   // Comments
   app
-    .route('/comments')
-    .get(commentController.readComments)
-    .post(commentController.createComment)
+    .route('/comments/create')
+    .post(authenticateUserWithPost, commentController.createComment);
+
+  app
+    .route('/comments/find')
+    .post(commentController.readComments);
+
+  // app
+  //   .route('/comments')
+  //   .get(commentController.readComments)
+  //   .post(commentController.createComment)
   // .delete(commentController.deleteComments);
 
   app

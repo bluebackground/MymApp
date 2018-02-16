@@ -69,35 +69,36 @@ const readRequests = (req, res) => {
     .populate('project', 'title')
     .populate('creator', 'username');
 
-  // if (req.body.options.query && typeof req.body.options.query === 'object') {
-  //   mongooseQuery.find(req.body.options.query);
-  // } else {
-  //   mongooseQuery.find({});
-  // }
-  //
-  // if (req.body.options.sortBy && typeof req.body.options.sortBy === 'object') {
-  //   mongooseQuery.sort(req.body.options.sortBy);
-  // }
-  //
-  // if (req.body.options.limit && typeof req.body.options.limit === 'number') {
-  //   mongooseQuery.limit(req.body.options.limit);
-  // }
-  //
-  // if (req.body.options.select && typeof req.body.options.select === 'string') {
-  //   mongooseQuery.select(req.body.options.select);
-  // }
-  //
-  // if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
-  //   req.body.options.populate.forEach((options) => {
-  //     const k = Object.keys(options);
-  //     if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
-  //       mongoose.Query.populate(options);
-  //     }
-  //   });
-  // }
+  if (req.body.options.query && typeof req.body.options.query === 'object') {
+    mongooseQuery.find(req.body.options.query);
+  } else {
+    mongooseQuery.find({});
+  }
+
+  if (req.body.options.sortBy && typeof req.body.options.sortBy === 'object') {
+    mongooseQuery.sort(req.body.options.sortBy);
+  }
+
+  if (req.body.options.limit && typeof req.body.options.limit === 'number') {
+    mongooseQuery.limit(req.body.options.limit);
+  }
+
+  if (req.body.options.select && typeof req.body.options.select === 'string') {
+    mongooseQuery.select(req.body.options.select);
+  }
+
+  if (req.body.options.populate && Array.isArray(req.body.options.populate) && req.body.options.populate.length > 0) {
+    req.body.options.populate.forEach((options) => {
+      const k = Object.keys(options);
+      if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
+        mongooseQuery.populate(options);
+      }
+    });
+  }
 
   mongooseQuery.exec()
     .then((requests) => {
+      // console.log(requests);
       res.json(requests);
     })
     .catch((err) => {

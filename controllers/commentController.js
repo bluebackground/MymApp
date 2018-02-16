@@ -24,28 +24,25 @@ const {
 
 const createComment = (req, res) => {
   const {
-    title,
     description,
-    from,
-    project
+    discussionID
   } = req.body;
 
-  if (testAll(validateStringInput, title, description) && testAll(validateId, from, project)) {
+  if (testAll(validateStringInput, description) && testAll(validateId, discussionID)) {
     // Commented out for tests.
-    const id = new mongoose.Types.ObjectId();
+    // const id = new mongoose.Types.ObjectId();
     const newComment = new Comment({
       // Commented out for tests.
       // Uncomment for production.
       // _id: id,
-      title,
       description,
-      from,
-      project
+      from: req.user._id,
+      discussion: discussionID
     });
 
     newComment.save()
       .then((comment) => {
-        handleLogs('Created new comment', id);
+        // handleLogs('Created new comment', id);
         res.json(comment);
       })
       .catch((err) => {
@@ -61,6 +58,7 @@ const readComments = (req, res) => {
   const mongooseQuery = Comment.find();
 
   if (req.body.options.query && typeof req.body.options.query === 'object') {
+    // console.log("query test");
     mongooseQuery.find(req.body.options.query);
   } else {
     mongooseQuery.find({});
@@ -78,17 +76,22 @@ const readComments = (req, res) => {
     mongooseQuery.select(req.body.options.select);
   }
 
-  if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
-    req.body.options.populate.forEach((options) => {
-      const k = Object.keys(options);
-      if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
-        mongoose.Query.populate(options);
+  //TODO: Update script code
+  if (req.body.options.populate && Array.isArray(req.body.options.populate) && req.body.options.populate.length > 0) {
+    // console.log("populate test");
+    req.body.options.populate.forEach((option) => {
+      const k = Object.keys(option);
+      if (typeof option === 'object' && k.includes('path') && k.includes('select') && option.path && option.select) {
+        // console.log(option);
+        mongooseQuery.populate(option);
       }
     });
   }
 
   mongooseQuery.exec()
     .then((comments) => {
+      // console.log("POST comments/read");
+      // console.log(comments);
       res.json(comments);
     })
     .catch((err) => {

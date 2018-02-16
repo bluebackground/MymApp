@@ -2,41 +2,40 @@ const mongoose = require('mongoose');
 
 const InvitationSchema = new mongoose.Schema({
   title: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-description: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-role: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-from: {
-  type: mongoose.Schema.Types.ObjectId,
-  required: true,
-  default: null,
-  
-},
-to: {
-  type: mongoose.Schema.Types.ObjectId,
-  required: true,
-  default: null,
-  
-},
-project: {
-  type: mongoose.Schema.Types.ObjectId,
-  required: true,
-  default: null,
-  
-}
+    type: String,
+    required: false,
+    default: null,
+  },
+  description: {
+    type: String,
+    required: false,
+    default: 'You are invited to join this project',
+  },
+  role: {
+    type: String,
+    required: false,
+    default: null,
+  },
+  status: {
+    type: String,
+    required: false,
+    default: 'unaccepted'
+  },
+  from: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  },
+  to: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  },
+  project: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Project'
+  }
 });
 
 // STATIC METHODS

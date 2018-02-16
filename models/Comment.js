@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const CommentSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required: false,
     default: null,
 
   },
@@ -17,7 +17,7 @@ const CommentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     default: null,
-
+    ref: 'User'
   },
   discussion: {
     type: mongoose.Schema.Types.ObjectId,

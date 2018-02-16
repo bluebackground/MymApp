@@ -6,9 +6,9 @@ const discussionRoutes = require('../routes/discussionRoutes.js');
 
 const messageRoutes = require('../routes/messageRoutes.js');
 const requestRoutes = require('../routes/requestRoutes.js');
+const commentRoutes = require('../routes/commentRoutes.js');
+const invitationRoutes = require('../routes/invitationRoutes.js');
 // const contributionRoutes = require('../routes/contributionRoutes.js');
-// const invitationRoutes = require('../routes/invitationRoutes.js');
-// const commentRoutes = require('../routes/commentRoutes.js');
 // const storyRoutes = require('../routes/storyRoutes.js');
 // const featureRoutes = require('../routes/featureRoutes.js');
 // const fsetRoutes = require('../routes/fsetRoutes.js');
@@ -22,9 +22,9 @@ module.exports = (app) => {
   discussionRoutes(app);
   messageRoutes(app);
   requestRoutes(app);
+  commentRoutes(app);
+  invitationRoutes(app);
   // contributionRoutes(app);
-  // invitationRoutes(app);
-  // commentRoutes(app);
   // storyRoutes(app);
   // featureRoutes(app);
   // fsetRoutes(app);

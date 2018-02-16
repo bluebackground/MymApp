@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Invitation = require('../models/Invitation.js');
+const Project = require('../models/Project.js');
 
 const {
   SUCCESS,
@@ -24,32 +25,25 @@ const {
 
 const createInvitation = (req, res) => {
   const {
-    title,
-    description,
-    role,
-    from,
     to,
     project
   } = req.body;
 
-  if (testAll(validateStringInput, title, description, role) && testAll(validateId, from, to, project)) {
+  if (testAll(validateId, to, project)) {
     // Commented out for tests.
-    const id = new mongoose.Types.ObjectId();
+    // const id = new mongoose.Types.ObjectId();
     const newInvitation = new Invitation({
       // Commented out for tests.
       // Uncomment for production.
       // _id: id,
-      title,
-      description,
-      role,
-      from,
+      from: req.user._id,
       to,
       project
     });
 
     newInvitation.save()
       .then((invitation) => {
-        handleLogs('Created new invitation', id);
+        // handleLogs('Created new invitation', id);
         res.json(invitation);
       })
       .catch((err) => {
@@ -182,8 +176,8 @@ const deleteInvitation = (req, res) => {
     Invitation.findByIdAndRemove(invitationID)
       .exec()
       .then((invitation) => {
-        const id = invitation._id;
-        handleLogs('Deleted invitation', id);
+        // const id = invitation._id;
+        // handleLogs('Deleted invitation', id);
         res.json(invitation);
       })
       .catch((err) => {
@@ -194,10 +188,77 @@ const deleteInvitation = (req, res) => {
   handleInvalidInput(res);
 };
 
+const getMyInvitations = (req, res) => {
+  Invitation.find({
+      to: req.user._id
+    })
+    .populate('from', 'username')
+    .populate('project', 'title')
+    .populate('to', 'username')
+    .exec()
+    .then((invitations) => {
+      res.json(invitations);
+    })
+    .catch((err) => {
+      handleServerError(res, err);
+    });
+}
+
+const acceptInvitation = (req, res) => {
+
+  const {
+    invitationID
+  } = req.body;
+
+  if (validateId(invitationID)) {
+    Invitation.findByIdAndUpdate(invitationID, {
+        status: 'accepted'
+      }, {
+        new: true
+      })
+      .then((invitation) => {
+        if (!invitation) {
+          handleInvalidInput(res);
+          return;
+        }
+        Project.findById(invitation.project)
+          .then((project) => {
+            if (!containsUserId(req.user._id, project)) {
+              // console.log("Adding user to project participants");
+              project.participants.push(req.user._id);
+              project.save();
+            }
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
+        res.json(invitation);
+      })
+      .catch((err) => {
+        handleServerError(res, err);
+      });
+    return;
+  }
+
+  handleInvalidInput(res);
+}
+
+function containsUserId(userId, project) {
+  for (let uId of project.participants) {
+    if (uId.toHexString() === userId.toHexString()) {
+      return true;
+    }
+  }
+  return false;
+}
+
 module.exports = {
   createInvitation,
   readInvitations,
   findInvitation,
   updateInvitation,
-  deleteInvitation
+  deleteInvitation,
+  getMyInvitations,
+  acceptInvitation
+
 };

@@ -40,14 +40,14 @@ const UserSchema = new mongoose.Schema({
     default: null,
   },
   skills: {
-    type: Array,
+    type: String,
     required: false,
-    default: [],
+    default: "",
   },
   interests: {
-    type: Array,
+    type: String,
     required: false,
-    default: [],
+    default: "",
   },
   projects: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -177,7 +177,9 @@ UserSchema.methods.toJSON = function () {
     _id: userObject._id,
     email: userObject.email,
     username: userObject.username,
-    projects: userObject.projects
+    projects: userObject.projects,
+    skills: userObject.skills,
+    interests: userObject.interests
   }
 };
 
