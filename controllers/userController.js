@@ -38,6 +38,7 @@ const authenticateUserWithPost = (req, res, next) => {
       next();
     })
     .catch((err) => {
+      console.log(err.message);
       res.status(UNAUTHORIZED).send();
     });
 }
@@ -75,6 +76,9 @@ const authenticateUser = (req, res, next) => {
       next();
     })
     .catch((err) => {
+
+      //TODO: Fix some sort of unhandled promise
+      console.log(err.message);
       res.status(UNAUTHORIZED).send();
     });
 }
@@ -123,13 +127,23 @@ const userLogin = (req, res) => {
       res.header('x-auth', token).send(token);
     });
   }).catch((e) => {
+    console.log(e.message);
     handleServerError(res, e);
   });
 };
 
 const getMe = (req, res) => {
   // console.log("getMe");
-  res.send(req.user);
+  User.findById(req.user._id)
+    .populate('projects', 'title')
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      console.log(err.message);
+      handleServerError(res, err);
+    });
+  // OLD - res.send(req.user);
 }
 
 const removeToken = (req, res) => {
@@ -178,7 +192,7 @@ const findUsers = (req, res) => {
     req.body.options.populate.forEact((options) => {
       const k = Object.keys(options);
       if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
-        mongoose.Query.populate(options);
+        mongooseQuery.populate(options);
       }
     });
   }
@@ -209,16 +223,46 @@ const findUser = (req, res) => {
       req.body.options.populate.forEach((options) => {
         const k = Object.keys(options);
         if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
-          mongoose.Query.populate(options);
+          mongooseQuery.populate(options);
         }
       });
     }
 
     mongooseQuery.exec()
       .then((user) => {
+        if (!user) {
+          handleInvalidInput(res);
+          return;
+        }
         res.json(user);
       })
       .catch((err) => {
+        handleServerError(res, err);
+      });
+    return;
+  }
+  handleInvalidInput(res);
+}
+
+const getUserByUsername = (req, res) => {
+  const {
+    username
+  } = req.params;
+
+  if (validateStringInput(username)) {
+    User.findOne({
+        username
+      })
+      .populate('projects', 'title')
+      .then((user) => {
+        if (!user) {
+          handleInvalidInput(res);
+          return;
+        }
+        res.json(user);
+      })
+      .catch((err) => {
+        console.log(err.message);
         handleServerError(res, err);
       });
     return;
@@ -240,5 +284,6 @@ module.exports = {
   findUsers,
   findUser,
   updateUser,
-  authenticateUserWithPost
+  authenticateUserWithPost,
+  getUserByUsername
 }

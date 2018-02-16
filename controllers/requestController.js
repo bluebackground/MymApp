@@ -26,23 +26,24 @@ const createRequest = (req, res) => {
   const {
     title,
     description,
-    creator,
     project,
     technology,
     type,
+    tags,
     category
   } = req.body;
 
-  if (testAll(validateStringInput, title, description, technology, type, category) && testAll(validateId, creator, project)) {
+  if (testAll(validateStringInput, title, description, technology, type, category) && testAll(validateId, project)) {
     // Commented out for tests.
-    const id = new mongoose.Types.ObjectId();
+    // const id = new mongoose.Types.ObjectId();
     const newRequest = new Request({
       // Commented out for tests.
       // Uncomment for production.
       // _id: id,
       title,
       description,
-      creator,
+      creator: req.user._id,
+      tags,
       project,
       technology,
       type,
@@ -51,7 +52,7 @@ const createRequest = (req, res) => {
 
     newRequest.save()
       .then((request) => {
-        handleLogs('Created new request', id);
+        // handleLogs('Created new request', id);
         res.json(request);
       })
       .catch((err) => {
@@ -64,34 +65,36 @@ const createRequest = (req, res) => {
 
 const readRequests = (req, res) => {
 
-  const mongooseQuery = Request.find();
+  const mongooseQuery = Request.find()
+    .populate('project', 'title')
+    .populate('creator', 'username');
 
-  if (req.body.options.query && typeof req.body.options.query === 'object') {
-    mongooseQuery.find(req.body.options.query);
-  } else {
-    mongooseQuery.find({});
-  }
-
-  if (req.body.options.sortBy && typeof req.body.options.sortBy === 'object') {
-    mongooseQuery.sort(req.body.options.sortBy);
-  }
-
-  if (req.body.options.limit && typeof req.body.options.limit === 'number') {
-    mongooseQuery.limit(req.body.options.limit);
-  }
-
-  if (req.body.options.select && typeof req.body.options.select === 'string') {
-    mongooseQuery.select(req.body.options.select);
-  }
-
-  if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
-    req.body.options.populate.forEach((options) => {
-      const k = Object.keys(options);
-      if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
-        mongoose.Query.populate(options);
-      }
-    });
-  }
+  // if (req.body.options.query && typeof req.body.options.query === 'object') {
+  //   mongooseQuery.find(req.body.options.query);
+  // } else {
+  //   mongooseQuery.find({});
+  // }
+  //
+  // if (req.body.options.sortBy && typeof req.body.options.sortBy === 'object') {
+  //   mongooseQuery.sort(req.body.options.sortBy);
+  // }
+  //
+  // if (req.body.options.limit && typeof req.body.options.limit === 'number') {
+  //   mongooseQuery.limit(req.body.options.limit);
+  // }
+  //
+  // if (req.body.options.select && typeof req.body.options.select === 'string') {
+  //   mongooseQuery.select(req.body.options.select);
+  // }
+  //
+  // if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
+  //   req.body.options.populate.forEach((options) => {
+  //     const k = Object.keys(options);
+  //     if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
+  //       mongoose.Query.populate(options);
+  //     }
+  //   });
+  // }
 
   mongooseQuery.exec()
     .then((requests) => {
@@ -109,20 +112,22 @@ const findRequest = (req, res) => {
 
   if (validateId(requestID)) {
 
-    const mongooseQuery = Request.findById(requestID);
+    const mongooseQuery = Request.findById(requestID)
+      .populate('project', 'title')
+      .populate('creator', 'username');
 
-    if (req.body.options.select && typeof req.body.options.select === 'string') {
-      mongooseQuery.select(req.body.options.select);
-    }
-
-    if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
-      req.body.options.populate.forEach((options) => {
-        const k = Object.keys(options);
-        if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
-          mongoose.Query.populate(options);
-        }
-      });
-    }
+    // if (req.body.options.select && typeof req.body.options.select === 'string') {
+    //   mongooseQuery.select(req.body.options.select);
+    // }
+    //
+    // if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
+    //   req.body.options.populate.forEach((options) => {
+    //     const k = Object.keys(options);
+    //     if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
+    //       mongoose.Query.populate(options);
+    //     }
+    //   });
+    // }
 
     mongooseQuery.exec()
       .then((request) => {

@@ -9,7 +9,8 @@ const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     require: true,
-    default: null
+    unique: true,
+    minLength: 1,
   },
   email: {
     type: String,
@@ -48,12 +49,12 @@ const UserSchema = new mongoose.Schema({
     required: false,
     default: [],
   },
-  projects: {
-    type: [mongoose.Schema.Types.ObjectId],
+  projects: [{
+    type: mongoose.Schema.Types.ObjectId,
     required: false,
     default: [],
-    ref: 'collectionName'
-  },
+    ref: 'Project'
+  }],
   follows: {
     type: [mongoose.Schema.Types.ObjectId],
     required: false,
@@ -141,6 +142,9 @@ UserSchema.methods.generateAuthToken = function () {
     access
   }, process.env.JWT_SECRET).toString();
 
+  // For the time being i'm going to clear all other tokens and then add.
+  // user.tokens = [{}];
+
   const check = user.tokens.filter((tok) => {
     // console.log(tok.access === access);
     // console.log(tok.token);
@@ -171,7 +175,9 @@ UserSchema.methods.toJSON = function () {
   const userObject = user.toObject();
   return {
     _id: userObject._id,
-    email: userObject.email
+    email: userObject.email,
+    username: userObject.username,
+    projects: userObject.projects
   }
 };
 

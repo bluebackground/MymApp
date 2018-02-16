@@ -110,18 +110,18 @@ const findTech = (req, res) => {
 
     const mongooseQuery = Tech.findById(techID);
 
-    if (req.body.options.select && typeof req.body.options.select === 'string') {
-      mongooseQuery.select(req.body.options.select);
-    }
-
-    if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
-      req.body.options.populate.forEach((options) => {
-        const k = Object.keys(options);
-        if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
-          mongoose.Query.populate(options);
-        }
-      });
-    }
+    // if (req.body.options.select && typeof req.body.options.select === 'string') {
+    //   mongooseQuery.select(req.body.options.select);
+    // }
+    // 
+    // if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
+    //   req.body.options.populate.forEach((options) => {
+    //     const k = Object.keys(options);
+    //     if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
+    //       mongoose.Query.populate(options);
+    //     }
+    //   });
+    // }
 
     mongooseQuery.exec()
       .then((tech) => {

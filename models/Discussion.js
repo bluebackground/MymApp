@@ -35,7 +35,12 @@ const DiscussionSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: ''
-  }
+  },
+  comments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment',
+    default: []
+  }]
 });
 
 // STATIC METHODS

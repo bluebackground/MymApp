@@ -2,29 +2,32 @@ const mongoose = require('mongoose');
 
 const MessageSchema = new mongoose.Schema({
   text: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-from: {
-  type: mongoose.Schema.Types.ObjectId,
-  required: true,
-  default: null,
-  
-},
-to: {
-  type: mongoose.Schema.Types.ObjectId,
-  required: true,
-  default: null,
-  
-},
-priority: {
-  type: Number,
-  required: true,
-  default: null,
-  
-}
+    type: String,
+    required: true,
+    default: null,
+  },
+  from: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    default: null,
+    ref: 'User'
+  },
+  to: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    default: null,
+    ref: 'User'
+  },
+  priority: {
+    type: Number,
+    required: false,
+    default: null,
+  },
+  status: {
+    type: String,
+    required: false,
+    default: 'active'
+  }
 });
 
 // STATIC METHODS

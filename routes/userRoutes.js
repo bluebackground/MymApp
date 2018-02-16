@@ -16,8 +16,12 @@ module.exports = (app) => {
 
   app
     .route('/users/me')
-    .post(userController.authenticateUser, userController.getMe);
+    .post(userController.authenticateUserWithPost, userController.getMe);
   //.put();
+
+  app
+    .route('/users/username/:username')
+    .post(userController.authenticateUserWithPost, userController.getUserByUsername);
 
   app
     .route('/users/me/token')

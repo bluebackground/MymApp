@@ -58,7 +58,7 @@ const createDiscussion = (req, res) => {
 }
 
 
-const findDiscussions = (req, res) => {
+const readDiscussions = (req, res) => {
   const mongooseQuery = Discussion.find();
 
   if (req.body.options.query && typeof req.body.options.query === 'object') {
@@ -97,7 +97,26 @@ const findDiscussions = (req, res) => {
     });
 }
 
+const findDiscussion = (req, res) => {
+  const {
+    discussionID
+  } = req.params;
+
+  if (validateId(discussionID)) {
+    Discussion.findById(discussionID)
+      .then((discussion) => {
+        res.json(discussion);
+      })
+      .catch((err) => {
+        handleServerError(res, err);
+      });
+    return;
+  }
+  handleInvalidInput(res);
+}
+
 module.exports = {
   createDiscussion,
-  findDiscussions
+  readDiscussions,
+  findDiscussion
 }

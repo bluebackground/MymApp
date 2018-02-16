@@ -19,11 +19,11 @@ const CommentSchema = new mongoose.Schema({
     default: null,
 
   },
-  project: {
+  discussion: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     default: null,
-
+    ref: 'Discussion'
   }
 });
 

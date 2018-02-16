@@ -8,12 +8,12 @@ module.exports = (app) => {
     .post(techController.readTechs);
 
   app
-    .route('/techs/create')
+    .route('/tech/create')
     .post(techController.createTech);
   // .delete(techController.deleteTechs);
 
   app
-    .route('/techs/:techID')
+    .route('/tech/:techID')
     .get(techController.findTech)
     .put(techController.updateTech)
     .delete(techController.deleteTech);

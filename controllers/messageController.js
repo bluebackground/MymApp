@@ -25,27 +25,24 @@ const {
 const createMessage = (req, res) => {
   const {
     text,
-    from,
-    to,
-    priority
+    user
   } = req.body;
 
-  if (testAll(validateStringInput, text) && testAll(validateNumberInput, priority) && testAll(validateId, from, to)) {
+  if (testAll(validateStringInput, text)) {
     // Commented out for tests.
-    const id = new mongoose.Types.ObjectId();
+    // const id = new mongoose.Types.ObjectId();
     const newMessage = new Message({
       // Commented out for tests.
       // Uncomment for production.
       // _id: id,
       text,
-      from,
-      to,
-      priority
+      from: req.user._id,
+      to: user._id,
     });
 
     newMessage.save()
       .then((message) => {
-        handleLogs('Created new message', id);
+        // handleLogs('Created new message', id);
         res.json(message);
       })
       .catch((err) => {
@@ -55,6 +52,25 @@ const createMessage = (req, res) => {
   }
   handleInvalidInput(res);
 };
+
+const getMyMessages = (req, res) => {
+  Message.find({
+      $or: [{
+        from: req.user._id
+      }, {
+        to: req.user._id
+      }]
+    })
+    .populate('from', 'username')
+    .populate('to', 'username')
+    .then((messages) => {
+      res.send(messages);
+    })
+    .catch((err) => {
+      console.log(err.message);
+      handleServerError(res, err);
+    });
+}
 
 const readMessages = (req, res) => {
 
@@ -186,10 +202,128 @@ const deleteMessage = (req, res) => {
   handleInvalidInput(res);
 };
 
+const removeMessage = (req, res) => {
+  const {
+    messageID
+  } = req.body;
+
+  if (validateId(messageID)) {
+    // TODO: put a check in place to make sure that this user can only delete message that they are the destination/owner of.
+    Message.findByIdAndRemove(messageID)
+      .then((message) => {
+        if (!message) {
+          handleInvalidInput(res);
+          return;
+        }
+        res.send(message);
+      })
+      .catch((err) => {
+        console.log(err.message);
+        handleServerError(res, err);
+      });
+    return;
+  }
+  handleInvalidInput(res);
+}
+
+const archiveMessage = (req, res) => {
+  const {
+    messageID
+  } = req.body;
+
+  if (validateId(messageID)) {
+    // TODO: put a check in place to make sure that this user can only delete message that they are the destination/owner of.
+    Message.findByIdAndUpdate(messageID, {
+        status: 'archived'
+      }, {
+        new: true
+      })
+      .exec()
+      .then((message) => {
+        // const id = message._id;
+        // handleLogs('Updated message properties', id);
+        if (!message) {
+          handleInvalidInput(res);
+          return;
+        }
+        res.json(message);
+      })
+      .catch((err) => {
+        handleServerError(res, err);
+      });
+    return;
+  }
+  handleInvalidInput(res);
+}
+
+const unarchiveMessage = (req, res) => {
+  const {
+    messageID
+  } = req.body;
+
+  if (validateId(messageID)) {
+    Message.findByIdAndUpdate(messageID, {
+        status: 'active'
+      }, {
+        new: true
+      })
+      .exec()
+      .then((message) => {
+        if (!message) {
+          handleInvalidInput(res);
+          return;
+        }
+        res.status(SUCCESS).send();
+      })
+      .catch((err) => {
+        handleServerError(res, err);
+      });
+    return;
+  }
+  handleInvalidInput(res);
+}
+
+const getMessage = (req, res) => {
+  const {
+    messageID
+  } = req.body;
+
+  if (validateId(messageID)) {
+    Message.findOne({
+        _id: messageID,
+        $or: [{
+          to: req.user._id
+        }, {
+          from: req.user._id
+        }]
+      })
+      .populate('from', 'username')
+      .populate('to', 'username')
+      .then((message) => {
+        if (!message) {
+          handleInvalidInput(res);
+          return;
+        }
+        res.send(message);
+      })
+      .catch((err) => {
+        console.log(err.message);
+        handleServerError(res, err);
+      });
+    return;
+  }
+  handleInvalidInput(res);
+}
+
 module.exports = {
   createMessage,
   readMessages,
   findMessage,
   updateMessage,
-  deleteMessage
+  deleteMessage,
+  archiveMessage,
+  removeMessage,
+  getMyMessages,
+  unarchiveMessage,
+  getMessage
 };

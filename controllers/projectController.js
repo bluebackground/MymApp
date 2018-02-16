@@ -96,7 +96,7 @@ const readProjects = (req, res) => {
     req.body.options.populate.forEach((options) => {
       const k = Object.keys(options);
       if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
-        mongoose.Query.populate(options);
+        mongooseQuery.populate(options);
       }
     });
   }
@@ -265,16 +265,52 @@ const joinProject = (req, res) => {
           handleInvalidInput(res);
         }
         // console.log(project);
-        project.participants.push(req.user._id);
-        project.save();
+        if (!containsUserId(req.user._id, project)) {
+          console.log('adding user to project');
+          project.participants.push(req.user._id);
+          project.save();
+        } else {
+          console.log('user already found on project');
+        }
+
+        if (!containsProjectId(project._id, req.user)) {
+          console.log('adding project to user');
+          // console.log(req.user);
+          req.user.projects.push(project._id);
+          req.user.save();
+        } else {
+          console.log('project already found on user');
+        }
+
         res.status(SUCCESS).send();
       })
       .catch((err) => {
+        console.log(err.message);
         handleServerError(res, err);
       });
     return;
   }
   handleInvalidInput(res);
+}
+
+function containsUserId(id, proj) {
+  for (let userID of proj.participants) {
+    if (userID.toHexString() === id.toHexString()) {
+      console.log(userID, id);
+      return true;
+    }
+  }
+  return false;
+}
+
+function containsProjectId(id, user) {
+  for (let projectID of user.projects) {
+    if (projectID.toHexString() === id.toHexString()) {
+      console.log(projectID, id);
+      return true;
+    }
+  }
+  return false;
 }
 
 module.exports = {

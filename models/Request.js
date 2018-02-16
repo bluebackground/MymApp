@@ -5,43 +5,43 @@ const RequestSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: null,
-
   },
   description: {
     type: String,
     required: true,
     default: null,
-
   },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     default: null,
-
+    ref: 'User'
   },
   project: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     default: null,
-
+    ref: 'Project'
   },
   technology: {
     type: String,
     required: true,
     default: null,
-
   },
   type: {
     type: String,
     required: true,
     default: null,
-
   },
   category: {
     type: String,
     required: true,
     default: null,
-
+  },
+  tags: {
+    type: String,
+    required: true,
+    default: null
   }
 });
 
