@@ -22,7 +22,6 @@ const CommentSchema = new mongoose.Schema({
   discussion: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    default: null,
     ref: 'Discussion'
   }
 });

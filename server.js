@@ -6,6 +6,13 @@ const routes = require('./routes/index.js');
 const server = express();
 server.use(bodyParser.json());
 
+const socketServer = require('http').createServer(server);
+const io = require('socket.io')(socketServer);
+
+const socketManager = require('./socketManager2.js');
+
+io.on('connection', socketManager);
+
 const {
   FRONT_END_SERVER
 } = require('./variables/connections.js');
@@ -56,4 +63,8 @@ server.use(function (req, res, next) {
 
 routes(server);
 
-module.exports = server;
+module.exports = {
+  server: socketServer,
+  // server,
+  io
+};

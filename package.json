@@ -9,9 +9,12 @@
     "chai-http": "^3.0.0",
     "cors": "^2.8.4",
     "express": "^4.16.2",
+    "http": "^0.0.0",
     "jsonwebtoken": "^8.1.1",
     "mocha": "^5.0.0",
     "mongoose": "^5.0.1",
+    "socket.io": "^2.0.4",
+    "uuid": "^3.2.1",
     "validator": "^9.4.0"
   },
   "scripts": {
@@ -19,5 +22,6 @@
     "test-watch": "nodemon --exec 'yarn run test'",
     "start": "node app.js",
     "start-db": "mongod --dbpath data"
-  }
+  },
+  "devDependencies": {}
 }

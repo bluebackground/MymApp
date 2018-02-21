@@ -1,7 +1,7 @@
 require('./variables/processConfig.js');
 
 const mongoose = require('mongoose');
-const server = require('./server.js');
+const {server} = require('./server.js');
 
 const {
   SERVER_PORT
