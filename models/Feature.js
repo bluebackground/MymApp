@@ -1,48 +1,49 @@
 const mongoose = require('mongoose');
 
 const FeatureSchema = new mongoose.Schema({
-  title: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-description: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-creator: {
-  type: mongoose.Schema.Types.ObjectId,
-  required: true,
-  default: null,
-  
-},
-project: {
-  type: mongoose.Schema.Types.ObjectId,
-  required: true,
-  default: null,
-  
-},
-fset: {
-  type: mongoose.Schema.Types.ObjectId,
-  required: true,
-  default: null,
-  
-},
-type: {
-  type: String,
-  required: true,
-  default: null,
-  
-},
-category: {
-  type: String,
-  required: true,
-  default: null,
-  
-}
+	title: {
+		type: String,
+		required: true,
+	},
+	description: {
+		type: String,
+		required: true,
+	},
+	creator: {
+		type: mongoose.Schema.Types.ObjectId,
+		required: true,
+		ref: "User"
+	},
+	project: {
+		type: mongoose.Schema.Types.ObjectId,
+		required: true,
+		ref: "Project"
+	},
+// fset: {
+//   type: mongoose.Schema.Types.ObjectId,
+//   required: false,
+//   default: null,
+// },
+	tasks: {
+		type: String,
+		required: false,
+		default: ''
+	},
+	type: {
+		type: String,
+		required: false,
+		default: ''
+	},
+	category: {
+		type: String,
+		required: true,
+	},
+	upvotes: [{
+		type: mongoose.Schema.Types.ObjectId,
+		required: false,
+		default: [],
+		ref: "User"
+	}]
 });
 
 // STATIC METHODS

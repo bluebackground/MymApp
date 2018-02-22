@@ -224,10 +224,16 @@ const acceptInvitation = (req, res) => {
         Project.findById(invitation.project)
           .then((project) => {
             if (!containsUserId(req.user._id, project)) {
-              // console.log("Adding user to project participants");
+              console.log("Adding user to project participants");
               project.participants.push(req.user._id);
-              project.save();
-            }
+				  project.save();
+				  
+				}
+				if (!containsId(project._id, req.user.projects)) {
+					console.log("Adding project to user active projects");
+					req.user.projects.push(project._id);
+					req.user.save();
+				}
           })
           .catch((err) => {
             console.log(err.message);
@@ -241,6 +247,15 @@ const acceptInvitation = (req, res) => {
   }
 
   handleInvalidInput(res);
+}
+
+function containsId(pId, arr) {
+	for (let i of arr) {
+		if (i.toHexString() === pId.toHexString()) {
+			return true;
+		}
+	}
+	return false;
 }
 
 function containsUserId(userId, project) {

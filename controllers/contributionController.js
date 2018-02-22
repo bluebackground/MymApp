@@ -26,35 +26,30 @@ const createContribution = (req, res) => {
   const {
     title,
     description,
-    creator,
-    comfirmations,
-    technology,
-    type,
-    category
+	 to
   } = req.body;
 
-  if (testAll(validateStringInput, title, description, technology, type, category) && testAll(validateArrayInput, comfirmations) && testAll(validateId, creator)) {
+  if (testAll(validateStringInput, title, description) && testAll(validateId, to._id)) {
     // Commented out for tests.
-    const id = new mongoose.Types.ObjectId();
+   //  const id = new mongoose.Types.ObjectId();
     const newContribution = new Contribution({
       // Commented out for tests.
       // Uncomment for production.
       // _id: id,
       title,
-      description,
-      creator,
-      comfirmations,
-      technology,
-      type,
-      category
+		description,
+		to: to._id,
+		toUsername: to.username,
+      creator: req.user._id
     });
 
     newContribution.save()
       .then((contribution) => {
-        handleLogs('Created new contribution', id);
+      //   handleLogs('Created new contribution', id);
         res.json(contribution);
       })
       .catch((err) => {
+			console.log(err.message);
         handleServerError(res, err);
       });
     return;
@@ -84,11 +79,11 @@ const readContributions = (req, res) => {
     mongooseQuery.select(req.body.options.select);
   }
 
-  if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
+  if (req.body.options.populate && Array.isArray(req.body.options.populate) && req.body.options.populate.length > 0) {
     req.body.options.populate.forEach((options) => {
       const k = Object.keys(options);
       if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
-        mongoose.Query.populate(options);
+        mongooseQuery.populate(options);
       }
     });
   }
@@ -109,20 +104,22 @@ const findContribution = (req, res) => {
 
   if (validateId(contributionID)) {
 
-    const mongooseQuery = Contribution.findById(contributionID);
+	 const mongooseQuery = Contribution.findById(contributionID)
+	 .populate('confirmations', 'username')
+	 .populate('creator', 'username');
 
-    if (req.body.options.select && typeof req.body.options.select === 'string') {
-      mongooseQuery.select(req.body.options.select);
-    }
+   //  if (req.body.options.select && typeof req.body.options.select === 'string') {
+   //    mongooseQuery.select(req.body.options.select);
+   //  }
 
-    if (req.body.options.populate && typeof req.body.options.populate === 'array' && req.body.options.populate.length > 0) {
-      req.body.options.populate.forEach((options) => {
-        const k = Object.keys(options);
-        if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
-          mongoose.Query.populate(options);
-        }
-      });
-    }
+   //  if (req.body.options.populate && Array.isArray(req.body.options.populate) && req.body.options.populate.length > 0) {
+   //    req.body.options.populate.forEach((options) => {
+   //      const k = Object.keys(options);
+   //      if (typeof options === 'object' && k.includes('path') && k.includes('select')) {
+   //        mongooseQuery.populate(options);
+   //      }
+   //    });
+   //  }
 
     mongooseQuery.exec()
       .then((contribution) => {
@@ -198,10 +195,53 @@ const deleteContribution = (req, res) => {
   handleInvalidInput(res);
 };
 
+const getMyContributions = (req, res) => {
+	Contribution.find({
+		to: req.user._id
+	})
+	.then((contributions) => {
+		res.json(contributions);
+	})
+	.catch((err) => {
+		console.log(err.message);
+		handleServerError(res, err);
+	});
+}
+
+const confirmContribution = (req, res) => {
+	const {contributionID} = req.body;
+	
+	Contribution.findById(contributionID)
+		.then((contribution) => {
+			if (!containsId(req.user._id, contribution.confirmations)){
+				contribution.confirmations.push(req.user._id);
+				contribution.save();
+				res.status(SUCCESS).send();
+				return;
+			}
+			handleInvalidInput(res);
+		})
+		.catch((err) => {
+			console.log(err.message);
+			handleServerError(res, err);
+		});
+}
+
+function containsId(uId, arr) {
+	for (let i of arr) {
+		if (i.toHexString() === uId.toHexString()) {
+			return true;
+		}
+	}
+	return false;
+}
+
 module.exports = {
   createContribution,
   readContributions,
   findContribution,
   updateContribution,
-  deleteContribution
+  deleteContribution,
+  confirmContribution,
+  getMyContributions
 };

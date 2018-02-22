@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Message = require('../models/Message.js');
+const User = require('../models/User.js');
 
 const {
   SUCCESS,
@@ -52,6 +53,50 @@ const createMessage = (req, res) => {
   }
   handleInvalidInput(res);
 };
+
+const createMessageFromUsername = (req, res) => {
+	const {
+		text,
+		username
+	 } = req.body;
+  
+	 if (testAll(validateStringInput, text, username)) {
+		// Commented out for tests.
+		// const id = new mongoose.Types.ObjectId();
+		User.find({
+			username
+		})
+		.then((user) => {
+			if (user) {
+				const newMessage = new Message({
+					// Commented out for tests.
+					// Uncomment for production.
+					// _id: id,
+					text,
+					from: req.user._id,
+					to: user._id,
+				 });
+			
+				 newMessage.save()
+					.then((message) => {
+					  // handleLogs('Created new message', id);
+					  res.json(message);
+					})
+					.catch((err) => {
+					  handleServerError(res, err);
+					});
+				 return;
+			  }
+			handleInvalidInput(res);
+		})
+		.catch((err) => {
+			console.log(err.message);
+			handleServerError(res, err);
+		});
+		return;
+	 }
+	 handleInvalidInput(res);
+}
 
 const getMyMessages = (req, res) => {
   Message.find({
@@ -325,5 +370,6 @@ module.exports = {
   removeMessage,
   getMyMessages,
   unarchiveMessage,
-  getMessage
+  getMessage,
+  createMessageFromUsername
 };

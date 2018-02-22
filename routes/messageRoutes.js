@@ -18,6 +18,9 @@ module.exports = (app) => {
     .route('/messages/create')
     .post(authenticateUserWithPost, messageController.createMessage);
 
+	app
+		.route('/messages/create2')
+		.post(authenticateUserWithPost, messageController.createMessageFromUsername);
 
   app
     .route('/messages/archive')

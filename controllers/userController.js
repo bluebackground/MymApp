@@ -31,14 +31,15 @@ const authenticateUserWithPost = (req, res, next) => {
     .then((user) => {
       if (!user) {
         // console.log("Reject");
-        return Promise.reject();
+		//   return Promise.reject('No user found from token');
+		  return Promise.reject();
       }
       req.user = user;
       req.token = tok;
       next();
     })
     .catch((err) => {
-      console.log(err.message);
+      // console.log(err.message);
       res.status(UNAUTHORIZED).send();
     });
 }
@@ -135,7 +136,11 @@ const userLogin = (req, res) => {
 const getMe = (req, res) => {
   // console.log("getMe");
   User.findById(req.user._id)
-    .populate('projects', 'title')
+	 .populate('projects', 'title')
+	 .populate('favoriteTech', 'name')
+	 .populate('follows', 'username')
+	 .populate('discussionFollows', 'title')
+	 .populate('projectFollows', 'title')
     .then((user) => {
       res.send(user);
     })
@@ -253,7 +258,11 @@ const getUserByUsername = (req, res) => {
     User.findOne({
         username
       })
-      .populate('projects', 'title')
+		.populate('projects', 'title')
+		.populate('favoriteTech', 'name')
+		.populate('discussionFollows', 'title')
+		.populate('projectFollows', 'title')
+		.populate('follows', 'username')
       .then((user) => {
         if (!user) {
           handleInvalidInput(res);
@@ -275,6 +284,103 @@ const updateUser = (req, res) => {
   // TODO: req.user is available.
 }
 
+const getMyFollows = (req, res) => {
+	User.findById(req.user._id)
+		.select('follows username')
+		.then((user) => {
+			res.json(user);
+		})
+		.catch((err) => {
+			console.log(err.message);
+			handleServerError(res, err);
+		});
+}
+
+const followProject = (req, res) => {
+	const {
+		projectID
+	} = req.body;
+
+	if(validateId(projectID)) {
+		if (!containsId(projectID, req.user.projectFollows)) {
+			req.user.projectFollows.push(projectID);
+			req.user.save();
+			res.status(SUCCESS).send();
+			return;
+		}
+		console.log("id already exists in user projectFollows");
+		res.status(SUCCESS).send();
+		return;
+	}
+	handleInvalidInput(res);
+}
+
+const followUser = (req, res) => {
+	const {
+		userID
+	} = req.body;
+
+	if(validateId(userID)) {
+		if (!containsId(userID, req.user.follows)) {
+			req.user.follows.push(userID);
+			req.user.save();
+			res.status(SUCCESS).send();
+			return;
+		}
+		console.log("id already exists in user userFollows");
+		res.status(SUCCESS).send();
+		return;
+	}
+	handleInvalidInput(res);
+}
+
+const followDiscussion = (req, res) => {
+	const {
+		discussionID
+	} = req.body;
+
+	if(validateId(discussionID)) {
+		if (!containsId(discussionID, req.user.discussionFollows)) {
+			req.user.discussionFollows.push(discussionID);
+			req.user.save();
+			res.status(SUCCESS).send();
+			return;
+		}
+		console.log("id already exists in user discussionFollows");
+		res.status(SUCCESS).send();
+		return;
+	}
+	handleInvalidInput(res);
+}
+
+const favoriteTech = (req, res) => {
+	const {
+		techID
+	} = req.body;
+
+	if(validateId(techID)) {
+		if (!containsId(techID, req.user.favoriteTech)) {
+			req.user.favoriteTech.push(techID);
+			req.user.save();
+			res.status(SUCCESS).send();
+			return;
+		}
+		console.log("id already exists in user favoriteTech");
+		res.status(SUCCESS).send();
+		return;
+	}
+	handleInvalidInput(res);
+}
+
+function containsId(id, arr) {
+	for (let i of arr) {
+		if (i.toHexString() === id) {
+			return true;
+		}
+	}
+	return false;
+}
+
 module.exports = {
   authenticateUser,
   createUser,
@@ -285,5 +391,10 @@ module.exports = {
   findUser,
   updateUser,
   authenticateUserWithPost,
-  getUserByUsername
+  getUserByUsername,
+  followProject,
+  followUser,
+  followDiscussion,
+  favoriteTech,
+  getMyFollows
 }

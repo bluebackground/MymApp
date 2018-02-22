@@ -4,44 +4,51 @@ const ContributionSchema = new mongoose.Schema({
   title: {
   type: String,
   required: true,
-  default: null,
-  
 },
 description: {
   type: String,
-  required: true,
-  default: null,
-  
+  required: true
 },
 creator: {
   type: mongoose.Schema.Types.ObjectId,
   required: true,
-  default: null,
-  
+  ref: "User"  
 },
-comfirmations: {
-  type: [mongoose.Schema.Types.ObjectId],
+to: {
+	type: mongoose.Schema.Types.ObjectId,
+	required: true,
+	ref: "User"
+},
+toUsername: {
+	type: String,
+	required: true
+},
+confirmations: [{
+  type: mongoose.Schema.Types.ObjectId,
   required: false,
   default: [],
-  ref: 'collectionName'
+  ref: 'User'
+}],
+project: {
+	type: mongoose.Schema.Types.ObjectId,
+	required: false,
+	ref: "Project",
+	default: null
 },
 technology: {
   type: String,
-  required: true,
-  default: null,
-  
+  required: false,
+  default: ""  
 },
 type: {
   type: String,
-  required: true,
-  default: null,
-  
+  required: false,
+  default: ''
 },
 category: {
   type: String,
-  required: true,
-  default: null,
-  
+  required: false,
+  default: ''
 }
 });
 

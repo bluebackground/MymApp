@@ -74,39 +74,39 @@ module.exports = function (socket) {
   })
 
   socket.on(MESSAGE_SENT, (message) => {
-    if (message.message.includes('@guide.ai')) {
+    if (message.message.includes('@guide.bot')) {
       console.log('guide woken');
       if (message.message.includes('-help')) {
         socket.emit(MESSAGE_SENT, {
           message: '(for you only) If you need help see the wiki page or review the list of options: -chat -feedback -commands',
-          username: 'guide.ai',
+          username: 'guide.bot',
 
         })
       } else if (message.message.includes('-commands')) {
         socket.emit(MESSAGE_SENT, {
           message: `(for only you) Available Commands: \n1. /ui color <color>\n2./message <@user> <message>\n3. /message_all <@user>... <message>`,
-          username: 'guide.ai'
+          username: 'guide.bot'
         })
       } else if (message.message.includes('-chat')) {
-        const chats = [`Hi ${message.username}. What kind of projects are you thinking about working on?`, `${message.username}, what's the most important thing to do right now?`, `Hi ${message.username}. Have you used any of the power user command features?`, "What's on your mind ${message.username}?", "How's work going?"];
+        const chats = [`Hi ${message.username}. What kind of projects are you thinking about working on?`, `${message.username}, what's the most important thing to do right now?`, `Hi ${message.username}. Have you used any of the power user command features?`, `What's on your mind ${message.username}?`, "How's work going?"];
         // const rand = Math.floor(Math.random() * chats.length);
         socket.emit(MESSAGE_SENT, {
-          message: `(for you only) ${chats[Math.floor(Math.random() * chats.length)]}`,
-          username: "guide.ai"
+          message: `(for only you) ${chats[Math.floor(Math.random() * chats.length)]}`,
+          username: "guide.bot"
         });
       } else if (message.message.includes('-feedback')) {
         const chats = ['Amazing job. Keep up the good work.', "I think you're on the right track.", "Incredible job on that.", "Fantastic work.", "There's no stopping you.", "Impressive.", "Great work inspires more great work.", "Bring it all the way to the finish line.", "You've go all the green lights. Go go go.", "Don't stop, you can do it."];
         // const rand = Math.floor(Math.random() * chats.length);
         socket.emit(MESSAGE_SENT, {
-          message: `(for you only) ${chats[Math.floor(Math.random() * chats.length)]}`,
-          username: "guide.ai"
+          message: `(for only you) ${chats[Math.floor(Math.random() * chats.length)]}`,
+          username: "guide.bot"
         });
       } else {
         const chats = ['That is quite interesting', "Is that so...", "Tell me more.", 'I have to go clean the data servers. brb.', 'Hold on to that thought, while I upgrade my communication circuits.', 'Out to lunch. Leave a message.', "Busy web scrapping, I'll get back to you on that"];
         // const rand = Math.floor(Math.random() * chats.length);
         socket.emit(MESSAGE_SENT, {
-          message: `(for you only) ${chats[Math.floor(Math.random() * chats.length)]}`,
-          username: "guide.ai"
+          message: `(for only you) ${chats[Math.floor(Math.random() * chats.length)]}`,
+          username: "guide.bot"
         });
       }
     } else {

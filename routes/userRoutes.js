@@ -12,7 +12,11 @@ module.exports = (app) => {
 
   app
     .route('/users/login')
-    .post(userController.userLogin);
+	 .post(userController.userLogin);
+	 
+app
+	.route('/users/myFollows')
+	.post(userController.authenticateUserWithPost, userController.getMyFollows);
 
   app
     .route('/users/me')
@@ -27,6 +31,21 @@ module.exports = (app) => {
     .route('/users/me/token')
     .delete(userController.authenticateUser, userController.removeToken);
 
+	app
+		.route('/users/followUser')
+		.post(userController.authenticateUserWithPost, userController.followUser);
+
+	app
+		.route('/users/followProject')
+		.post(userController.authenticateUserWithPost, userController.followProject);
+	
+	app
+		.route('/users/followDiscussion')
+		.post(userController.authenticateUserWithPost, userController.followDiscussion);
+	
+	app
+		.route('/users/favoriteTech')
+		.post(userController.authenticateUserWithPost, userController.favoriteTech);
   // app
   //   .route('/users/:userId')
   //   .get(userController.findUser);

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Feature = require('../models/Feature.js');
+const Note = require('../models/Note.js');
 
 const {
   SUCCESS,
@@ -22,34 +22,32 @@ const {
   handleInvalidInput
 } = require('../helpers/handlers.js');
 
-const createFeature = (req, res) => {
+const createNote = (req, res) => {
   const {
-    title,
-    description,
-	 category,
-	 tasks,
-	 projectID
+	title,
+	description,
+	projectID,
+	tags
   } = req.body;
 
-  if (testAll(validateStringInput, title, description, category, tasks) && testAll(validateId, projectID)) {
+  if (testAll(validateStringInput, title, description, tags) && testAll(validateId, projectID)) {
     // Commented out for tests.
    //  const id = new mongoose.Types.ObjectId();
-    const newFeature = new Feature({
+    const newNote = new Note({
       // Commented out for tests.
       // Uncomment for production.
       // _id: id,
       title,
       description,
       creator: req.user._id,
-		project: projectID,
-		tasks: tasks,
-      category
+      project: projectID,
+      tags
     });
 
-    newFeature.save()
-      .then((feature) => {
-      //   handleLogs('Created new feature', id);
-        res.json(feature);
+    newNote.save()
+      .then((note) => {
+      //   handleLogs('Created new note', id);
+        res.json(note);
       })
       .catch((err) => {
 			console.log(err.message);
@@ -60,9 +58,9 @@ const createFeature = (req, res) => {
   handleInvalidInput(res);
 };
 
-const readFeatures = (req, res) => {
-	// console.log(req.body.options);
-  const mongooseQuery = Feature.find();
+const readNotes = (req, res) => {
+
+  const mongooseQuery = Note.find();
 
   if (req.body.options.query && typeof req.body.options.query === 'object') {
     mongooseQuery.find(req.body.options.query);
@@ -92,24 +90,24 @@ const readFeatures = (req, res) => {
   }
 
   mongooseQuery.exec()
-    .then((features) => {
-      res.json(features);
+    .then((notes) => {
+      res.json(notes);
     })
     .catch((err) => {
       handleServerError(res);
     });
 };
 
-const findFeature = (req, res) => {
+const findNote = (req, res) => {
   const {
-    featureID
+    noteID
   } = req.params;
 
-  if (validateId(featureID)) {
+  if (validateId(noteID)) {
 
-	 const mongooseQuery = Feature.findById(featureID)
-		 .populate('project', 'title')
-		 .populate('creator', 'username');
+	 const mongooseQuery = Note.findById(noteID)
+	 	.populate('project', 'title')
+      .populate('creator', 'username');
 
    //  if (req.body.options.select && typeof req.body.options.select === 'string') {
    //    mongooseQuery.select(req.body.options.select);
@@ -125,10 +123,11 @@ const findFeature = (req, res) => {
    //  }
 
     mongooseQuery.exec()
-      .then((feature) => {
-        res.json(feature);
+      .then((note) => {
+        res.json(note);
       })
       .catch((err) => {
+			console.log(err.message);
         handleServerError(res, err);
       });
     return;
@@ -136,9 +135,9 @@ const findFeature = (req, res) => {
   handleInvalidInput(res);
 };
 
-const updateFeature = (req, res) => {
+const updateNote = (req, res) => {
   const {
-    featureID
+    noteID
   } = req.params;
 
   const {
@@ -151,8 +150,8 @@ const updateFeature = (req, res) => {
     category
   } = req.body;
 
-  if (validateId(featureID) && testAll(validateStringInput, title, description, type, category) && testAll(validateId, creator, project, fset)) {
-    Feature.findByIdAndUpdate(featureID, {
+  if (validateId(noteID) && testAll(validateStringInput, title, description, type, category) && testAll(validateId, creator, project, fset)) {
+    Note.findByIdAndUpdate(noteID, {
         title,
         description,
         creator,
@@ -164,10 +163,10 @@ const updateFeature = (req, res) => {
         new: true
       })
       .exec()
-      .then((feature) => {
-        const id = feature._id;
-        handleLogs('Updated feature properties', id);
-        res.json(feature);
+      .then((note) => {
+        const id = note._id;
+        handleLogs('Updated note properties', id);
+        res.json(note);
       })
       .catch((err) => {
         handleServerError(res, err);
@@ -177,18 +176,18 @@ const updateFeature = (req, res) => {
   handleInvalidInput(res);
 };
 
-const deleteFeature = (req, res) => {
+const deleteNote = (req, res) => {
   const {
-    featureID
+    noteID
   } = req.params;
 
-  if (validateId(featureID)) {
-    Feature.findByIdAndRemove(featureID)
+  if (validateId(noteID)) {
+    Note.findByIdAndRemove(noteID)
       .exec()
-      .then((feature) => {
-        const id = feature._id;
-        handleLogs('Deleted feature', id);
-        res.json(feature);
+      .then((note) => {
+        const id = note._id;
+        handleLogs('Deleted note', id);
+        res.json(note);
       })
       .catch((err) => {
         handleServerError(res, err);
@@ -198,45 +197,10 @@ const deleteFeature = (req, res) => {
   handleInvalidInput(res);
 };
 
-const upvotePost = (req, res) => {
-	const {
-		featureID
-	} = req.body;
-
-	if (validateId(featureID)) {
-		Feature.findById(featureID)
-			.then((feature) => {
-				if (!containsId(req.user._id, feature.upvotes)) {
-					feature.upvotes.push(req.user._id);
-					feature.save();
-					res.status(SUCCESS).send();
-					console.log("Id added to feature upvotes");
-					return;
-				}
-				res.status(SUCCESS).send();
-			})
-			.catch((err) => {
-				handleServerError(res, err);
-			});
-		return;
-	}
-	handleInvalidInput(res);
-}
-
-function containsId(id, arr) {
-	for (let i of arr) {
-		if (i.toHexString() === id.toHexString()) {
-			return true;
-		}
-	}
-	return false;
-}
-
 module.exports = {
-  createFeature,
-  readFeatures,
-  findFeature,
-  updateFeature,
-  deleteFeature,
-  upvotePost
+  createNote,
+  readNotes,
+  findNote,
+  updateNote,
+  deleteNote
 };

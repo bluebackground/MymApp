@@ -37,7 +37,12 @@ const UserSchema = new mongoose.Schema({
   about: {
     type: String,
     required: false,
-    default: null,
+    default: '',
+  },
+  stat: {
+	required: false,
+	default: '',
+	type: String
   },
   skills: {
     type: String,
@@ -55,24 +60,42 @@ const UserSchema = new mongoose.Schema({
     default: [],
     ref: 'Project'
   }],
-  follows: {
-    type: [mongoose.Schema.Types.ObjectId],
+  follows: [{
+    type: mongoose.Schema.Types.ObjectId,
     required: false,
     default: [],
-    ref: 'collectionName'
-  },
-  stars: {
-    type: [mongoose.Schema.Types.ObjectId],
-    required: false,
-    default: null,
+    ref: 'User'
+  }],
+  projectFollows: [{
+	  type: mongoose.Schema.Types.ObjectId,
+	  required: false,
+	  default: [],
+	  ref: 'Project'
+  }],
+  discussionFollows: [{
+	  type: mongoose.Schema.Types.ObjectId,
+	  required: false,
+	  default: [],
+	  ref: "Discussion"
+  }],
+  favoriteTech: [{
+	  type: mongoose.Schema.Types.ObjectId,
+	  required: false,
+	  default: [],
+	  ref: "Tech"
+  }],
+//   stars: [{
+//     type: mongoose.Schema.Types.ObjectId,
+//     required: false,
+//     default: [],
 
-  },
-  contributions: {
-    type: [mongoose.Schema.Types.ObjectId],
-    required: false,
-    default: [],
-    ref: 'collectionName'
-  },
+//   }],
+//   contributions: {
+//     type: [mongoose.Schema.Types.ObjectId],
+//     required: false,
+//     default: [],
+//     ref: 'collectionName'
+//   },
   tokens: [{
     access: {
       type: String,
@@ -179,7 +202,13 @@ UserSchema.methods.toJSON = function () {
     username: userObject.username,
     projects: userObject.projects,
     skills: userObject.skills,
-    interests: userObject.interests
+	 interests: userObject.interests,
+	 favoriteTech: userObject.favoriteTech,
+	 follows: userObject.follows,
+	 discussionFollows: userObject.discussionFollows,
+	 projectFollows: userObject.projectFollows,
+	 stat: userObject.stat,
+	 about: userObject.about
   }
 };
 
