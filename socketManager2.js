@@ -68,8 +68,9 @@ module.exports = function (socket) {
   //   sendMessageToChatFromUser(chatId, message);
   // });
   socket.on('disconnect', (username) => {
-    connectedUsers = removeUser2(connectedUsers, username);
-    socket.broadcast.emit('disconnect', connectedUsers);
+	  console.log('Client disconnected');
+   //  connectedUsers = removeUser2(connectedUsers, username);
+   //  socket.broadcast.emit('disconnect', connectedUsers);
     // socket.emit('disconnect', connectedUsers);
   })
 
